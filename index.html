@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>This Week</title>
+<style>
+  :root{--ink:#1f2430;--soft:#5c6470;--rule:#e3e1db;--accent:#14555e;--paper:#faf9f6;--card:#fff;--warn:#9a6700}
+  body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 -apple-system,"Segoe UI",sans-serif}
+  main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+  h1{font-size:1.5rem;margin:0 0 2px}
+  .stamp{color:var(--soft);font-size:.85rem;margin-bottom:26px}
+  .stamp.stale{color:var(--warn);font-weight:600}
+  h2{font-size:1.05rem;border-bottom:2px solid var(--accent);padding-bottom:4px;margin:30px 0 12px}
+  .card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;margin:8px 0;display:flex;gap:10px;align-items:baseline}
+  .card input{transform:translateY(2px)}
+  .done{opacity:.45;text-decoration:line-through}
+  .course{font-weight:700;color:var(--accent);white-space:nowrap}
+  .due{margin-left:auto;color:var(--soft);font-size:.85rem;white-space:nowrap}
+  .due.soon{color:#8b1e1e;font-weight:700}
+  .pts{color:var(--soft);font-size:.82rem}
+  a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}
+  .meet{color:var(--soft)}
+  .empty{color:var(--soft);font-style:italic}
+</style>
+</head>
+<body>
+<main>
+  <h1>This Week</h1>
+  <div class="stamp" id="stamp">loading…</div>
+  <h2>Today</h2><div id="today"></div>
+  <h2>Due soon</h2><div id="due"></div>
+  <h2>Recent announcements</h2><div id="ann"></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = iso => new Date(iso).toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+
+async function load(path){ const r = await fetch(path); if(!r.ok) throw new Error(path); return r.json(); }
+
+function doneKey(id){ return 'done:'+id }
+
+(async () => {
+  let data, courses;
+  try { data = await load('data/upcoming.json'); }
+  catch { $('stamp').textContent = 'No data yet — run: python3 scripts/canvas_pull.py'; return; }
+  try { courses = (await load('data/courses.json')).courses; } catch { courses = []; }
+
+  // Staleness stamp: trust dies without it (docs/LESSONS.md)
+  const age = (Date.now() - new Date(data.generatedAt)) / 36e5;
+  $('stamp').textContent = 'data pulled ' + fmt(data.generatedAt) + (age > 20 ? ' — STALE, run the pull' : '');
+  if (age > 20) $('stamp').classList.add('stale');
+
+  // Today: courses whose "meets" string mentions today's weekday
+  const day = new Date().toLocaleDateString([], {weekday:'short'}); // e.g. "Mon"
+  const todays = courses.filter(c => (c.meets||'').toLowerCase().includes(day.toLowerCase()));
+  $('today').innerHTML = todays.length
+    ? todays.map(c => `<div class="card"><span class="course">${c.code}</span> ${c.name} <span class="due meet">${c.meets}</span></div>`).join('')
+    : '<div class="empty">No classes today.</div>';
+
+  // Due list with persistent checkboxes (keyed on assignment id, not title)
+  const soonCut = Date.now() + 48*36e5;
+  $('due').innerHTML = data.items.length ? data.items.map(it => {
+    const done = localStorage.getItem(doneKey(it.id)) === '1';
+    const soon = new Date(it.dueAt) < soonCut;
+    return `<div class="card ${done?'done':''}" id="row-${it.id}">
+      <input type="checkbox" ${done?'checked':''} onchange="toggle(${it.id})">
+      <span class="course">${it.course}</span>
+      <a href="${it.url}" target="_blank">${it.name}</a>
+      ${it.points ? `<span class="pts">${it.points} pts</span>` : ''}
+      <span class="due ${soon?'soon':''}">${fmt(it.dueAt)}</span>
+    </div>`;
+  }).join('') : '<div class="empty">Nothing due in the window. Suspicious? Run the pull.</div>';
+
+  $('ann').innerHTML = data.announcements.length ? data.announcements.map(a =>
+    `<div class="card"><span class="course">${a.course}</span><a href="${a.url}" target="_blank">${a.title}</a><span class="due">${fmt(a.postedAt)}</span></div>`
+  ).join('') : '<div class="empty">None in the last stretch.</div>';
+})();
+
+function toggle(id){
+  const k = doneKey(id), row = document.getElementById('row-'+id);
+  const now = localStorage.getItem(k) === '1' ? '0' : '1';
+  localStorage.setItem(k, now);
+  row.classList.toggle('done', now === '1');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "_howto": "Copy this file to data/courses.json and fill in your real courses. canvasId is the number in the course URL (https://babson.instructure.com/courses/1234567). Set canvasId to null for a course whose Canvas shell has not appeared yet; the pull skips it without erroring. 'meets' is free text, but include weekday short names (Mon, Tue...) so the Today section can match them.",
+  "courses": [
+    { "code": "XYZ1234", "name": "Example Course One", "canvasId": 1234567, "meets": "Mon & Wed 9:45-11:15 AM, Building Room" },
+    { "code": "ABC5678", "name": "Example Course Two", "canvasId": null, "meets": "Thu 6:30-9:00 PM" }
+  ]
+}

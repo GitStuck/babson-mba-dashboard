@@ -1,0 +1,8 @@
+# secrets — never commit
+state/
+
+# your personal pulled data
+data/*.json
+!data/courses.sample.json
+
+.DS_Store
