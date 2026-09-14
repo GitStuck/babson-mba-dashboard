@@ -16,7 +16,7 @@ hidden tabs before debugging blind.
 
 ## Phase 1 — Trustworthy This Week (first week)
 
-Goal: the page is checked every morning because it's never wrong. Add anything the pull
+Goal: the page is checked every morning because it's never wrong. (Design notes: `docs/features/todays-focus.md` when you add the daily note, and `docs/features/grade-weighted-priorities.md` for how ranking should work.) Add anything the pull
 misses that the owner cares about (quizzes and discussions come through the assignments
 endpoint; ungraded to-dos ride the planner endpoint, see LESSONS). Make the due list
 honest about timezones (Canvas returns UTC; render local; 03:59Z is 11:59 pm ET the
@@ -25,14 +25,14 @@ keys stable when titles change by keying on assignment id).
 
 ## Phase 2 — It runs itself (when checking manually gets old)
 
-Goal: fresh data without thinking. Add a macOS LaunchAgent that runs the pull every
+Goal: fresh data without thinking. (Read `docs/features/automation.md` first — it's all scar tissue.) Add a macOS LaunchAgent that runs the pull every
 morning before first class (plist template in LESSONS; professors post materials around
 6 am on class days, so pull after 7). Add a "data pulled at" stamp on the page so
 staleness is visible. Keep manual pull working for mid-day refreshes.
 
 ## Phase 3 — Readings and materials (when the syllabus pile bites)
 
-Goal: the page knows what to read before each class. Walk each course's Modules API for
+Goal: the page knows what to read before each class. (Read `docs/features/readings-pipeline.md` first.) Walk each course's Modules API for
 files and pages tied to upcoming sessions; list them under a "prep" section with links
 into Canvas; add checkboxes. Optionally download files into a per-course folder tree.
 Mind LESSONS on hidden Files tabs, page-embedded files, and per-seat items that cannot
@@ -40,7 +40,7 @@ be fetched.
 
 ## Phase 4 — The study layer (exam season)
 
-Goal: the dashboard helps you *prepare*, not just track. Candidates, in the order they
+Goal: the dashboard helps you *prepare*, not just track. (This phase has the most prior art: `docs/features/study-loop.md`, `docs/features/primers.md`, and `docs/features/exam-prep.md`.) Candidates, in the order they
 tend to earn their keep: a per-course page showing the grading structure and where
 points actually come from (read it from the syllabus once, store it as JSON); grades and
 professor comments via the enrollments/submissions endpoints; a session-notes box (two
@@ -49,7 +49,7 @@ what the owner's next exam needs.
 
 ## Phase 5 — Your life, not just your classes (whenever)
 
-Goal: one honest daily picture. Class meetings plus personal fixed blocks (gym, work,
+Goal: one honest daily picture. (Design notes: `docs/features/day-plan.md`.) Class meetings plus personal fixed blocks (gym, work,
 commitments) in a simple day view; export an .ics of the semester so the phone calendar
 matches; whatever the owner keeps wishing existed. By this point they'll know exactly
 what to ask for — that's the sign the loop is working.

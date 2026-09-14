@@ -45,6 +45,10 @@ Claude and having it fixed the same day. That loop is the product. Start yours.
   Open Claude in this folder and say "read the roadmap and start phase 0."
 - `docs/LESSONS.md` — hard-won Canvas and workflow lessons from the original dashboard,
   so your agent doesn't rediscover them the slow way.
+- `docs/features/` — one design scaffold per major feature of the original (the daily
+  focus note, the readings pipeline, primers, the study loop, exam prep, day planning,
+  automation): the choices that worked, the mistakes already made, and build sketches.
+  Your agent reads the relevant one before designing your version.
 - `CLAUDE.md` — standing instructions your Claude picks up automatically in this repo.
 
 ## Privacy stance
